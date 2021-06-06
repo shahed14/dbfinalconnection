@@ -10,7 +10,7 @@ package dbfinal;
  * @author HP
  */
 public class orders {
- int id , product_id ,total_price, quantity , user_id ;
+ int id , product_id , quantity , user_id ;
     String date , name;
     
     public orders(){
@@ -60,13 +60,7 @@ public class orders {
         this.product_id = order_id;
     }
 
-    public int getTotal_price() {
-        return total_price;
-    }
-
-    public void setTotal_price(int total_price) {
-        this.total_price = total_price;
-    }
+   
 
     public String getDate() {
         return date;

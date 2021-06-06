@@ -135,7 +135,7 @@ public class AdminManageProducts extends Application {
             ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
             di.setHeaderText("About app");
             di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to change your old password to a new password");
+            di.setContentText("this page is created in order to manage products like add ,edit,deleteor search about products");
             di.show();
         });
         helpMenu.getItems().add(aboutApp);
@@ -245,9 +245,11 @@ backTODashboard.setOnAction(eventhandler);
                         int excuteUpdate = statement.executeUpdate(sql);
                         if(excuteUpdate >0){
                             informationBox("product added successfully", null, "success");
+                            clear();
                         }
                         else{
                             informationBox("addition failed , check your answer and try again", null, "failed");
+                            clear();
                         }
                     } catch (SQLException ex) {
                         System.out.println(ex);
@@ -320,14 +322,11 @@ backTODashboard.setOnAction(eventhandler);
 
                     }
                     products_tableView.getItems().setAll(products_list);
-                     informationBox("we found what you want", null, "success");
                 } catch (SQLException ex) {
                     System.out.println(ex);
                 }
             }
-            else{
-                informationBox("on exist to what you want", null, "failed");
-            }
+           
             if(event.getSource()==searchForProduct){
                 try {
                     String category_input = categoryLisr.getValue();
@@ -361,6 +360,7 @@ backTODashboard.setOnAction(eventhandler);
                 } catch (SQLException ex) {
                     System.out.println(ex);
                 }
+            }
            if(event.getSource()==reset){
          nameTextFeild.setText("");
          categoryLisr.setValue("");
@@ -425,7 +425,7 @@ backTODashboard.setOnAction(eventhandler);
             }
         }
         }
-        }
+        
           private boolean validate_input(String input){
         return !input.equals("");
     }
@@ -440,7 +440,14 @@ backTODashboard.setOnAction(eventhandler);
             }
         }
         return false;
-    }   
+    } 
+    private void clear(){
+         nameTextFeild.setText("");
+         categoryLisr.setValue("");
+         priceTextFeild.setText("");
+         quantityTextFeild.setText("");
+         descriptionTextArea.setText("");
+    }
     private static void informationBox(String infoMessage, String header, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(infoMessage);

@@ -211,7 +211,8 @@ public class ClientProfile extends Application {
         public void handle(ActionEvent event) {
             if(event.getSource()==viewProfile){
                 try {
-                    String sql = "select Name , Email , Mobile from users";
+                    String Role = "Client";
+                    String sql = "select Name , Email , Mobile from users where Role='"+Role+"'";
                     ResultSet rs = statement.executeQuery(sql);
                     ArrayList<users> client_list = new ArrayList<>();
                     while(rs.next()){

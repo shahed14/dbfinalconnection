@@ -124,7 +124,7 @@ public class AdminManageClients extends Application {
             ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
             di.setHeaderText("About app");
             di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to change your old password to a new password");
+            di.setContentText("this page is created in order manage clients like add,edit,search or delete clients from datebase");
             di.show();
         });
         helpMenu.getItems().add(aboutApp);
@@ -212,7 +212,7 @@ public class AdminManageClients extends Application {
             }
             
             if(event.getSource()==deleteById){
-               //  users user = client_tableView.getSelectionModel().getSelectedItem();
+                 users user = client_tableView.getSelectionModel().getSelectedItem();
                    String id_input = idText.getText();
                 if (validate_input(id_input)) {
                      
@@ -222,14 +222,27 @@ public class AdminManageClients extends Application {
                          System.out.println("affected rows" + excute);
                          if(excute>0){
                              informationBox("user deleted successfully", null, "success");
+                             clear1();
                          }
                          else{
-                             informationBox("deletion failed,please try again", null, "failed"); 
+                             informationBox("deletion failed,this id do not exist ,please try again", null, "failed");
+                             clear1();
                          }
                      } catch (SQLException ex) {
                          System.out.println(ex);
                      }
                          }
+                 /*
+                 String sql = "delete from users where Id='"+user.getId()+"'";
+                try {
+                    int excuteUpdate = statement.executeUpdate(sql);
+                    if(excuteUpdate>0){
+                        System.out.println("affected rows=" + excuteUpdate);
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex);
+                }*/
+                 
                      
             }
             if(event.getSource()==searchByName){
@@ -252,6 +265,7 @@ public class AdminManageClients extends Application {
                         
                     }
                     client_tableView.getItems().setAll(client_user);
+                    clear2();
                 } catch (SQLException ex) {
                     System.out.println(ex);
                 }
@@ -322,6 +336,13 @@ public class AdminManageClients extends Application {
         }
         return false;
     }   
+    private void clear1(){
+        idText.setText("");
+        
+    }
+    private void clear2(){
+        nameText.setText("");
+    }
     private static void informationBox(String infoMessage, String header, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(infoMessage);

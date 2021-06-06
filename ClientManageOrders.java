@@ -143,10 +143,18 @@ public class ClientManageOrders extends Application {
             p.setName(rs.getString("Name"));
             product_list2.add(p.getName());
         }*/
-         String[] products = new String[]{"tv" , "computer","cups","tables" };
-        ObservableList<String> observableList = FXCollections.observableArrayList(products);
+        // String[] products = new String[]{"tv" , "computer","cups","tables" };
+       // ObservableList<String> observableList = FXCollections.observableArrayList(products);
         product_list = new ComboBox();
-        product_list.getItems().addAll(observableList);
+        String sql = "Select Name from products";
+        ResultSet rs = statement.executeQuery(sql);
+        ArrayList<String> p = new ArrayList<>();
+        while(rs.next()){
+            products pp = new products();
+            pp.setName(rs.getString("Name"));
+            p.add(pp.getName());
+        }
+        product_list.getItems().addAll(p);
         product_list.setEditable(true);
         HBox hb1 = new HBox(10, productListLabel, product_list);
         hb1.setAlignment(Pos.CENTER);
@@ -243,6 +251,7 @@ public class ClientManageOrders extends Application {
 
                         if (excuteUpdate > 0) {
                             informationBox("order added successfully", null, "success");
+                            clear();
                         } else {
                             informationBox("order addition failed", null, "Failed");
                         }
@@ -362,6 +371,7 @@ public class ClientManageOrders extends Application {
                     productListLabel.setStyle("-fx-text-fill:" + new_color + ";");
                     quantityLabel.setStyle("-fx-text-fill:" + new_color + ";");
                     orderDateLabel.setStyle("-fx-text-fill:" + new_color + ";");
+                    Product_idLabel.setStyle("-fx-text-fill:" + new_color + ";");
                     product_table.setStyle("-fx-text-fill:" + new_color + ";");
 
                 });
@@ -415,6 +425,12 @@ public class ClientManageOrders extends Application {
             }
         }
         return false;
+    }
+    private void clear(){
+        product_idText.setText("");
+        product_list.setValue("");
+        quantityTextFeild.setText("");
+        orderDateTextFeild.setText("");
     }
 
     public static void main(String[] args) {

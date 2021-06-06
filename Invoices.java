@@ -10,7 +10,8 @@ package dbfinal;
  * @author HP
  */
 public class Invoices {
-    int id , order_id,totalPrice ;
+    int id , order_id;
+    double totalPrice ;
     
     String date;
     
@@ -34,11 +35,11 @@ public class Invoices {
         this.order_id = order_id;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 

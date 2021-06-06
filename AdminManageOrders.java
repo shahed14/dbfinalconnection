@@ -57,8 +57,8 @@ public class AdminManageOrders extends Application {
     ComboBox<String> listClient , listProducts;
     Button addOrder , reset , searchOrder , back , viewOrder;
     TableView<orders> order_tableView;
-    TableColumn<orders, String> listOfClient_tableColumn;
-    TableColumn<orders, String> listOfProducts_tableColumn;
+    TableColumn<orders, Integer> listOfClient_tableColumn;
+    TableColumn<orders, Integer> listOfProducts_tableColumn;
     TableColumn<orders, Integer> quantity_tableColumn;
     TableColumn<orders, String>orderDate_tableColumn;
     Connection connection;
@@ -129,14 +129,15 @@ public class AdminManageOrders extends Application {
             ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
             di.setHeaderText("About app");
             di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to change your old password to a new password");
+            di.setContentText("this page is created in order to manage orders like add,search or edit orders");
             di.show();
         });
         helpMenu.getItems().add(aboutApp);
         allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
         
         listOfClientLabel =new Label("clients :");
-         String sql = "select Name from users";
+        String role = "Client";
+         String sql = "select Name from users where Role='"+role+"'";
         ResultSet rs = statement.executeQuery(sql);
         ArrayList<String> client_list = new ArrayList<>();
         while (rs.next()) {
@@ -180,10 +181,10 @@ public class AdminManageOrders extends Application {
      hb4.setPadding(new Insets(10));
      order_tableView =new TableView<>();
      listOfClient_tableColumn = new TableColumn<>("Clients ");
-     listOfClient_tableColumn.setCellValueFactory(new PropertyValueFactory("name"));
+     listOfClient_tableColumn.setCellValueFactory(new PropertyValueFactory("user_id"));
      
      listOfProducts_tableColumn = new TableColumn<>("Products ");
-     listOfProducts_tableColumn.setCellValueFactory(new PropertyValueFactory("name"));
+     listOfProducts_tableColumn.setCellValueFactory(new PropertyValueFactory("Product_id"));
      
      quantity_tableColumn = new TableColumn<>("Quantity ");
      quantity_tableColumn.setCellValueFactory(new PropertyValueFactory("quantity"));
@@ -259,7 +260,12 @@ primaryStage.show();
                                 +"values('"+user.getId()+"','"+product.getId()+"','"+quantity_input+"','"+orderDate_input+"')";
                         int excuteUpdate = statement.executeUpdate(sql);
                         if(excuteUpdate>0){
-                            System.out.println("affected rows " + excuteUpdate);
+                            informationBox("order added successfully", null, "Success");
+                            clear();
+                        }
+                        else{
+                            informationBox("order addition failed please try again", null, "Failed");
+                            clear();
                         }
                         
                     } }catch (SQLException ex) {
@@ -269,55 +275,33 @@ primaryStage.show();
             }
             
             if(event.getSource()==viewOrder){
-             
-               /* try{
-                
-                String sql = "select users.Id , products.Id from users,products ";
-               
-                    ResultSet rs1 = statement.executeQuery(sql);
-                    while(rs1.next()){
-                        
-                        users user = new users();
-                        user.setId(rs1.getInt("users.Id"));
+                try {
+                    String sql2 = "select products.id from products";
+                    ResultSet rs2 = statement.executeQuery(sql2);
+                    while(rs2.next()){
                         products product = new products();
-                        product.setId(rs1.getInt("products.Id"));
-                        String sql2 = "select User_id ,Product_id ,Quantity ,Date from orders where User_id='"
-                                +user.getId()+"'and Product_id='"+product.getId()+"'";
-                        ResultSet rs2 = statement.executeQuery(sql2);
-                        ArrayList<orders> ordersList = new ArrayList<>();
-                        while(rs2.next()&&rs1.next()){
-                            orders order = new orders();
-                            order.setUser_id(rs2.getInt("User_id"));
-                            order.setProduct_id(rs2.getInt("Product_id"));
-                            order.setQuantity(rs2.getInt("Quantity"));
-                            order.setDate(rs2.getString("Date"));
-                            ordersList.add(order);
-                            
-                        }
-                    order_tableView.getItems().setAll(ordersList);
-                        
-                    }*/
-                      try {
-                    String sql = "select  users.Id , Product_id ,Quantity ,Date from orders,users";
-                    ResultSet rs = statement.executeQuery(sql);
-                    ArrayList<orders> products_list = new ArrayList<>();
-                    while (rs.next()) {
-                        users user = new users();
-                        user.setId(rs.getInt("Id"));
-                        int id = user.getId();
-                    orders order = new orders();
-                    order.setUser_id(id);
-                    order.setProduct_id(rs.getInt("Product_id"));
-                    order.setQuantity(rs.getInt("Quantity"));
-                    order.setDate(rs.getString("Date"));
-                    products_list.add(order);
+                        product.setId(rs2.getInt("Id"));
+                    String sql = "select Product_Id , User_id ,orders.Quantity ,Date from orders where Product_id='"+product.getId()+"'";
                     
+                    ResultSet rs = statement.executeQuery(sql);
+                    ArrayList<orders> orders = new ArrayList<>();
+                    while(rs.next()){
+                        orders order = new orders();
+                        product.setId(rs.getInt("Id"));
+                        order.setUser_id(rs.getInt("User_id"));
+                        order.setProduct_id(rs.getInt("Product_id"));
+                        order.setQuantity(rs.getInt("Quantity"));
+                        order.setDate(rs.getString("Date"));
+                        orders.add(order);
                     }
-                    order_tableView.getItems().setAll(products_list);
-                    } catch (SQLException ex) {
+                    order_tableView.getItems().setAll(orders);
+                    
+                }} catch (SQLException ex) {
                     System.out.println(ex);
-                    }
-               
+                }
+                
+                
+                   
             }
             if(event.getSource()==reset){
                 listClient.setValue("");
@@ -331,8 +315,12 @@ primaryStage.show();
                
                if(validate_input(client_input)){
                     try {
-                      
-                        String sql = "select Product_id ,User_id , Quantity ,Date from orders where User_id='"+client_input+"'";
+                        String sql2 = "select users.Id from users where Name='"+client_input+"'";
+                        ResultSet rs = statement.executeQuery(sql2);
+                        if(rs.next()){
+                            users user = new users();
+                            user.setId(rs.getInt("Id"));
+                        String sql = "select Product_id ,User_id , Quantity ,Date from orders where User_id='"+user.getId()+"'";
                         ResultSet rs2 = statement.executeQuery(sql);
                         ArrayList<orders> ol = new ArrayList<>();
                         while(rs2.next()){
@@ -344,8 +332,7 @@ primaryStage.show();
                             ol.add(order);
                         }
                         order_tableView.getItems().setAll(ol);
-                         informationBox(ol.toString(), null, "success");
-                          } catch (SQLException ex) {
+                        } } catch (SQLException ex) {
                         System.out.println(ex);
                     }
                         
@@ -402,7 +389,12 @@ primaryStage.show();
             }
         }
         }
-                
+           private void clear(){
+             listClient.setValue("");
+                listProducts.setValue("");
+                quantityTextFeild.setText("");
+                orderDateTextField.setText("");  
+           }     
             
 
    private boolean validate_input(String input){

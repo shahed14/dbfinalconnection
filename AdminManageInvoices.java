@@ -55,7 +55,8 @@ public class AdminManageInvoices extends Application {
     Button generate , view , search,delete , back , reset;
     TableView<Invoices> invoices_tableView;
     TableColumn<Invoices, String> Date_tableColumn;
-    TableColumn<Invoices, Integer> id_tableColumn , order_id_tableColumn ,totalPrice_tableColumn;
+    TableColumn<Invoices, Integer> id_tableColumn , order_id_tableColumn ;
+   TableColumn<Invoices,Double> totalprice_tableColumn;
     Label idlabel;
     TextField idtext;
     Connection connection;
@@ -125,7 +126,7 @@ public class AdminManageInvoices extends Application {
             ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
             di.setHeaderText("About app");
             di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to change your old password to a new password");
+            di.setContentText("this page is created in order to manage invoices like edit ,delete,genrate or search about invoices");
             di.show();
         });
         helpMenu.getItems().add(aboutApp);
@@ -133,14 +134,17 @@ public class AdminManageInvoices extends Application {
         invoices_tableView = new TableView<>();
         id_tableColumn = new TableColumn<>("invoice Id");
         id_tableColumn.setCellValueFactory(new PropertyValueFactory("Id"));
+        
         order_id_tableColumn  = new TableColumn<>("Order Id");
         order_id_tableColumn.setCellValueFactory(new PropertyValueFactory("Order_id"));
-         totalPrice_tableColumn = new TableColumn<>("Total Price");
-        totalPrice_tableColumn.setCellValueFactory(new PropertyValueFactory("Total_price"));
+        
+         totalprice_tableColumn = new TableColumn<>("Total Price");
+        totalprice_tableColumn.setCellValueFactory(new PropertyValueFactory("Total_price"));
+        
         Date_tableColumn = new TableColumn<>("Order Date");
         Date_tableColumn.setCellValueFactory(new PropertyValueFactory("Date"));
         
-        invoices_tableView.getColumns().addAll(id_tableColumn, order_id_tableColumn, totalPrice_tableColumn, Date_tableColumn);
+        invoices_tableView.getColumns().addAll(id_tableColumn, order_id_tableColumn, totalprice_tableColumn, Date_tableColumn);
         view = new Button("View");
         view.setId("rich-blue");
         view.setOnAction(eventhandler);
@@ -184,6 +188,8 @@ public class AdminManageInvoices extends Application {
         @Override
         public void handle(ActionEvent event) {
             if(event.getSource()==view){
+                
+                Invoices invoice2 = invoices_tableView.getSelectionModel().getSelectedItem();
                  try {
                     String sql = "select * from invoices";
                     ResultSet rs = statement.executeQuery(sql);
@@ -198,10 +204,7 @@ public class AdminManageInvoices extends Application {
 
                     }
                     invoices_tableView.getItems().setAll(invoices_list);
-                    // System.out.println(invoices_list.get(0));
-                     //System.out.println(invoices_list.get(1));
-                    // System.out.println(invoices_list.get(2));
-                   //  System.out.println(invoices_list.get(4));
+                   
 
                 } catch (SQLException ex) {
                     System.out.println(ex);
@@ -209,7 +212,7 @@ public class AdminManageInvoices extends Application {
             }
             if(event.getSource()==generate){
                 try {
-                    String sql = "select Quantity from orders";
+                    String sql = "select Total_price, Quantity from orders";
                     ResultSet rs = statement.executeQuery(sql);
                     while(rs.next()){
                             orders order = new orders();

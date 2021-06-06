@@ -117,7 +117,7 @@ public class LoginPage extends Application{
             ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
             di.setHeaderText("About app");
             di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to change your old password to a new password");
+            di.setContentText("this page is created in order to login to dashboard or register if you dont login");
             di.show();
         });
         helpMenu.getItems().add(aboutApp);
@@ -165,7 +165,8 @@ public class LoginPage extends Application{
                 
                 if(validate_input(userName_input)&&validate_input(Password_input)){
                     try {
-                        String sql = "select Role from users where Email ='"+userName_input+"'and Password='"+Password_input+"'";
+                        String sql = "select Role from users where Email ='"+userName_input
+                                +"'and Password='"+Password_input+"'";
                         ResultSet rs = statement.executeQuery(sql);
                         while(rs.next()){
                          String Role = rs.getString("Role");

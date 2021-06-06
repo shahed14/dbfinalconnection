@@ -82,7 +82,7 @@ public class ClientViewInvoices extends Application {
         
         
         
-            scene = new Scene(vbAll);
+            scene = new Scene(vbAll ,400,500);
             primaryStage.setTitle("view Invoices!");
             primaryStage.setScene(scene);
          scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");

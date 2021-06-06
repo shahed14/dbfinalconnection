@@ -192,7 +192,7 @@ public class ClientChangePassword extends Application {
  int excuteQuery = statement.executeUpdate(sql2);
  if(excuteQuery>0){
                           informationBox("password chanded successfully", null, "success");
-                                 
+                           clear();      
                       }
  else{
      informationBox("change failed", null, "failed");
@@ -228,11 +228,10 @@ public class ClientChangePassword extends Application {
                       System.out.println(ex);
                   }
             }
-              else{
-                  informationBox("you have entred an invalid password entre another one and try again", null, "Invalid");
-              }
+            }
+             
             
-
+            
             
              if (event.getSource() == fontColor) {
                 ColorPicker cp = new ColorPicker();
@@ -282,6 +281,10 @@ public class ClientChangePassword extends Application {
         }
 
         }
+    
+    private void clear(){
+        oldPasswordText.setText("");
+        newPasswordText.setText("");
     }
          private static void informationBox(String infoMessage, String header, String title) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
