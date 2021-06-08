@@ -35,7 +35,7 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class ClientDashboard extends Application {
+public class ClientDashboard extends Stage {
     Button manageorder , profile , viewInvoices ,changepassword,logout;
     MenuBar allMenues;
      Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
@@ -45,8 +45,7 @@ public class ClientDashboard extends Application {
     Connection connection;
     Statement statement;
     Scene scene;
-    @Override
-    public void start(Stage primaryStage) {
+   public ClientDashboard(){
       Text text = new Text("Client Dashboard");
         text.setId("title");
         text.setStyle("-fx-font-size:30");
@@ -55,7 +54,7 @@ public class ClientDashboard extends Application {
         fileMenu = new Menu("File");
         exit = new MenuItem("exit");
         exit.setOnAction(e -> {
-            primaryStage.close();
+         //   primaryStage.close();
         });
         fileMenu.getItems().add(exit);
         formatMenu = new Menu("format");
@@ -115,13 +114,30 @@ public class ClientDashboard extends Application {
      
        profile = new Button(" Profile");
        profile.setId("record-sales");
+       ClientProfile cp = new ClientProfile();
+       profile.setOnAction(e->{
+           cp.show();
+       });
        manageorder = new Button("Manage Orders");
+       ClientManageOrders cmo = new ClientManageOrders();
+       manageorder.setOnAction(e->{
+           cmo.show();
+       });
        manageorder.setId("record-sales");
        viewInvoices = new Button("View Invoices");
+       ClientViewInvoices cvi = new ClientViewInvoices();
+       viewInvoices.setOnAction(e->{
+           cvi.show();
+       });
        viewInvoices.setId("record-sales");
        changepassword = new Button("Change Password");
+      ClientChangePassword chp = new ClientChangePassword();
+      changepassword.setOnAction(e->{
+          chp.show();
+      });
        changepassword.setId("record-sales");
        logout = new Button("Logout");
+       
        logout.setId("record-sales");
         HBox hb1 = new HBox(20,profile,viewInvoices,manageorder);
         hb1.setAlignment(Pos.CENTER);
@@ -134,11 +150,10 @@ public class ClientDashboard extends Application {
           vb.setAlignment(Pos.CENTER);
          scene = new Scene(vb ,700,400);
         
-        primaryStage.setTitle("Client Dashboard");
-        primaryStage.setScene(scene);
+        setTitle("Client Dashboard");
+       setScene(scene);
                 scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-        primaryStage.show();
     }
 
      public class eventHandler implements EventHandler<ActionEvent> {
@@ -184,8 +199,6 @@ public class ClientDashboard extends Application {
          
      }
     
-    public static void main(String[] args) {
-        launch(args);
-    }
+    
     
 }

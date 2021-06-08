@@ -31,7 +31,7 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class ClientViewInvoices extends Application {
+public class ClientViewInvoices extends Stage {
     TableView<Invoices> invoicesTableView;
     TableColumn<Invoices, Integer> id_tableColumn , order_id_tableColumn , totalPrice_tableColumn;
     TableColumn<Invoices , String> date_tableColumn;
@@ -39,14 +39,15 @@ public class ClientViewInvoices extends Application {
     Scene scene = null;
     Connection connection = null;
     Statement statement = null;
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+   public ClientViewInvoices(){
         try {
             connection = DBconnection.get_connection();
             statement = connection.createStatement();
             
              } catch (SQLException ex) {
                 System.out.println(ex); 
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
         
         eventHandler eh = new eventHandler();
@@ -83,11 +84,10 @@ public class ClientViewInvoices extends Application {
         
         
             scene = new Scene(vbAll ,400,500);
-            primaryStage.setTitle("view Invoices!");
-            primaryStage.setScene(scene);
+            setTitle("view Invoices!");
+            setScene(scene);
          scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-            primaryStage.show();
     }
            public class eventHandler implements EventHandler<ActionEvent> {
 
@@ -112,6 +112,11 @@ public class ClientViewInvoices extends Application {
                 }
                 
             }
+            if(event.getSource()==back){
+                ClientDashboard cd = new ClientDashboard();
+                ClientViewInvoices.this.close();
+                cd.show();
+            }
             
         }
                
@@ -120,12 +125,7 @@ public class ClientViewInvoices extends Application {
 
     
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+    
     private boolean validate_input(String input){
         return !input.equals("");
     }

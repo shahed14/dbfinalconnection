@@ -46,7 +46,7 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class AdminManageInvoices extends Application {
+public class AdminManageInvoices extends Stage {
     MenuBar allMenues;
     Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
     MenuItem exit, fontColor, backgroundColor, aboutApp;
@@ -62,12 +62,13 @@ public class AdminManageInvoices extends Application {
     Connection connection;
     Statement statement;
     Scene scene;
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    public AdminManageInvoices(){
         try {
             connection = DBconnection.get_connection();
             statement = connection.createStatement();
         } catch (SQLException ex) {
+            System.out.println(ex);
+        } catch (Exception ex) {
             System.out.println(ex);
         }
       eventHandler eventhandler = new eventHandler();
@@ -75,7 +76,7 @@ public class AdminManageInvoices extends Application {
         fileMenu = new Menu("File");
         exit = new MenuItem("exit");
         exit.setOnAction(e -> {
-            primaryStage.close();
+          AdminManageInvoices.this.close();
         });
         fileMenu.getItems().add(exit);
         formatMenu = new Menu("format");
@@ -175,11 +176,9 @@ public class AdminManageInvoices extends Application {
         vb.setAlignment(Pos.CENTER);
         vb.setPadding(new Insets(20));
         scene = new Scene(vb);
-        primaryStage.setScene(scene);
+        setScene(scene);
                 scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-        primaryStage.setTitle("manage invoices");
-        primaryStage.show();
 
     }
 
@@ -251,6 +250,9 @@ public class AdminManageInvoices extends Application {
                 invoices_tableView.getItems().clear();
             }
             if(event.getSource()==back){
+                AdminDashborad ad = new AdminDashborad();
+                AdminManageInvoices.this.close();
+                ad.show();
                 
             }
             if(event.getSource()==search){
@@ -346,8 +348,5 @@ public class AdminManageInvoices extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
+   
 }

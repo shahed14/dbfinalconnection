@@ -50,7 +50,7 @@ import javafx.util.converter.IntegerStringConverter;
  *
  * @author HP
  */
-public class ClientProfile extends Application {
+public class ClientProfile extends Stage {
    Button viewProfile , editProfile , backtoDashboard ; 
     TextField nameTextFeild , emailTextFeild , mobileTextFeild;
     Label nameLabel , emailLabel , mobileLabel;
@@ -69,10 +69,7 @@ public class ClientProfile extends Application {
     
     
     
-    @Override
-    
-    
-    public void start(Stage primaryStage) {
+   public ClientProfile(){
        try {
             conn = DBconnection.get_connection();
             statement = conn.createStatement();
@@ -85,7 +82,7 @@ public class ClientProfile extends Application {
        fileMenu = new Menu("File");
        exit = new MenuItem("exit");
        exit.setOnAction(e->{
-           primaryStage.close();
+       ClientProfile.this.close();
        });
        fileMenu.getItems().add(exit);
        formatMenu = new Menu("format");
@@ -167,6 +164,7 @@ public class ClientProfile extends Application {
 
        backtoDashboard = new Button("back");
        backtoDashboard.setId("rich-blue");
+       backtoDashboard.setOnAction(eventhandler);
        HBox hb4 = new HBox(15,viewProfile,editProfile,backtoDashboard);
        hb4.setAlignment(Pos.CENTER);
        hb4.setPadding(new Insets(10));
@@ -199,10 +197,9 @@ public class ClientProfile extends Application {
         VBox vb = new VBox(20 ,allMenues,hb1,hb2,hb3,clientsTableView,hb4);
        
         scene = new Scene(vb,400,500);
-       primaryStage.setScene(scene);
+       setScene(scene);
        scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-       primaryStage.show();
        
     }
         public class eventHandler implements EventHandler<ActionEvent>{
@@ -254,8 +251,9 @@ public class ClientProfile extends Application {
             }
             
           if(event.getSource()==backtoDashboard){
-             //i dont know;
-             //you try this
+             ClientDashboard cd = new ClientDashboard();
+             ClientProfile.this.close();
+             cd.show();
               
               
           }  
@@ -323,9 +321,7 @@ public class ClientProfile extends Application {
          }
             
         
-    public static void main(String[] args) {
-        launch(args);
-    }
+  
 
       
     

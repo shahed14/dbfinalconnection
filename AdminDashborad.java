@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -40,23 +41,22 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class AdminDashborad extends Application {
+public class AdminDashborad extends Stage {
     Button manageorder , manageinvice , manageclient ,manageproduct,changepassword,logout;
     MenuBar allMenues;
      Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
     MenuItem exit, fontColor, backgroundColor, aboutApp;
     RadioMenuItem small, medium, large, arial, sans_serif, salmon, royalblue;
     ToggleGroup fontSizeToggle, fontFamilyToggle;
-    Connection connection;
-    Statement statement;
-    Scene scene;
-    @Override
-    public void start(Stage primaryStage) {
+   // Connection connection;
+   // Statement statement;
+   // Scene scene;
+  public AdminDashborad(){
         Text text = new Text("Admin Dashboard");
         text.setId("title");
         text.setStyle("-fx-font-size:30");
-         eventHandler eventhandler = new eventHandler();
-      allMenues = new MenuBar();
+        // eventHandler eventhandler = new eventHandler();
+    /*  allMenues = new MenuBar();
         fileMenu = new Menu("File");
         exit = new MenuItem("exit");
         exit.setOnAction(e -> {
@@ -116,17 +116,38 @@ public class AdminDashborad extends Application {
         });
         helpMenu.getItems().add(aboutApp);
         allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
-
+*/
      
        manageclient = new Button("Manage Client");
        manageclient.setId("record-sales");
+      // manageclient.setCursor(Cursor.HAND);
+       AdminManageClients amc = new AdminManageClients();
+       manageclient.setOnAction(e->{
+          amc.show();
+       });
        manageorder = new Button("Manage Orders");
        manageorder.setId("record-sales");
+       AdminManageOrders amo = new AdminManageOrders();
+       manageorder.setOnAction(e->{
+           amo.show();
+       });
        manageinvice = new Button("Manage Invoices");
        manageinvice.setId("record-sales");
+       AdminManageInvoices ami = new AdminManageInvoices();
+       manageinvice.setOnAction(e->{
+           ami.show();
+       });
        manageproduct = new Button("Manage Products");
        manageproduct.setId("record-sales");
+       AdminManageProducts amp = new AdminManageProducts();
+       manageproduct.setOnAction(e->{
+           amp.show();
+       });
        changepassword = new Button("Change Password");
+       AdminChangePassword acp = new AdminChangePassword();
+       changepassword.setOnAction(e->{
+           acp.show();
+       });
        changepassword.setId("record-sales");
        logout = new Button("Logout");
        logout.setId("record-sales");
@@ -137,17 +158,16 @@ public class AdminDashborad extends Application {
             hb2.setAlignment(Pos.CENTER);
           hb2.setPadding(new Insets(30));
           
-          VBox vb = new VBox(35,allMenues,text,hb1,hb2);
+          VBox vb = new VBox(35,text,hb1,hb2);
           vb.setAlignment(Pos.CENTER);
-         scene = new Scene(vb ,700,400);
+       Scene scene = new Scene(vb ,700,400);
         
-        primaryStage.setTitle("Admin Dashboard");
-        primaryStage.setScene(scene);
+        setTitle("Admin Dashboard");
+        setScene(scene);
                 scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-        primaryStage.show();
     }
-     public class eventHandler implements EventHandler<ActionEvent> {
+   /*  public class eventHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
@@ -177,7 +197,7 @@ public class AdminDashborad extends Application {
                 apply_color.setOnAction((ActionEvent e) -> {
                     Color value = cp.getValue();
                     String new_color = value.toString().replace("0x", "#");
-                    scene.getRoot().setStyle("-fx-background-color:" + new_color + ";");
+                   // scene.getRoot().setStyle("-fx-background-color:" + new_color + ";");
                 });
                 VBox vbox_Color2 = new VBox(10, cp, apply_color);
                 vbox_Color2.setPadding(new Insets(20));
@@ -189,9 +209,16 @@ public class AdminDashborad extends Application {
         }
          
      }
+   /*  public static void openNewStage(Class myClass,String to,String title) {
+        Stage stage=new Stage();
+        AdminChangePassword a = new AdminChangePassword();
+        Scene scene=new Scene(getClass().getResource("AdminChangePassword"));
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.show();*/
+
     
-    public static void main(String[] args) {
-        launch(args);
-    }
+     
+   
     
 }

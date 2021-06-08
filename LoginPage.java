@@ -136,7 +136,10 @@ public class LoginPage extends Application{
         login.setId("rich-blue");
         login.setOnAction(eventhandler);
         register = new Button("Register");
-        register.setOnAction(eventhandler);
+        Register r = new Register();
+        register.setOnAction(e->{
+            r.show();
+        });
         register.setId("rich-blue");
         reset = new  Button("Reset");
         reset.setId("rich-blue");
@@ -170,12 +173,16 @@ public class LoginPage extends Application{
                         ResultSet rs = statement.executeQuery(sql);
                         while(rs.next()){
                          String Role = rs.getString("Role");
-                         if(Role.equalsIgnoreCase("Role")){
+                         if(Role.equalsIgnoreCase("Admin")){
                              System.out.println("hye "+Role);
-                             
+                             AdminDashborad ab = new AdminDashborad();
+                             ab.show();
+                            
                          }
-                         else{
-                             System.out.println("hye"+Role);
+                         else if(Role.equalsIgnoreCase("Client")){
+                             System.out.println("hye" + Role);
+                             ClientDashboard cd = new ClientDashboard();
+                             cd.show();
                          }
                         }
                         
@@ -191,14 +198,7 @@ public class LoginPage extends Application{
                 userNameText.setText("");
                 passwordText.setText("");
             }
-            if(event.getSource()==register){
-                System.out.println("register now my baby but i cant take you there!!");
-                Stage newstage = new Stage();
-                Register r = new Register();
-               // Scene scene2 = new Scene(r.start(newstage);
-                newstage.setScene(scene);
-                newstage.show();
-            }
+           
             
             
             

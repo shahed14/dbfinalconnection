@@ -46,7 +46,7 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class AdminManageOrders extends Application {
+public class AdminManageOrders extends Stage {
     MenuBar allMenues;
     Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
     MenuItem exit, fontColor, backgroundColor, aboutApp;
@@ -65,168 +65,152 @@ public class AdminManageOrders extends Application {
     Statement statement;
     Scene scene;
     
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+   public AdminManageOrders(){
         try {
-            connection = DBconnection.get_connection();
-            statement = connection.createStatement();
+            try {
+                connection = DBconnection.get_connection();
+                statement = connection.createStatement();
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+            eventHandler eventhandler = new eventHandler();
+            allMenues = new MenuBar();
+            fileMenu = new Menu("File");
+            exit = new MenuItem("exit");
+            exit.setOnAction(e -> {
+                AdminManageOrders.this.close();
+            });
+            fileMenu.getItems().add(exit);
+            formatMenu = new Menu("format");
+            fontSize = new Menu("font size");
+            fontSizeToggle = new ToggleGroup();
+            small = new RadioMenuItem("small");
+            small.setOnAction(e -> {
+                scene.getRoot().setStyle("-fx-font-size:small");
+            });
+            small.setToggleGroup(fontSizeToggle);
+            medium = new RadioMenuItem("medium");
+            medium.setOnAction(e -> {
+                scene.getRoot().setStyle("-fx-font-size:medium");
+            });
+            medium.setToggleGroup(fontSizeToggle);
+            large = new RadioMenuItem("large");
+            large.setOnAction(e -> {
+                scene.getRoot().setStyle("-fx-font-size:large");
+            });
+            large.setToggleGroup(fontSizeToggle);
+            fontSize.getItems().addAll(small, medium, large);
+            fontColor = new MenuItem("font color");
+            fontColor.setOnAction(eventhandler);
+            fontfamily = new Menu("font family");
+            fontFamilyToggle = new ToggleGroup();
+            arial = new RadioMenuItem("arial");
+            arial.setOnAction(e -> {
+                scene.getRoot().setStyle("-fx-font-family:arial;");
+            });
+            arial.setToggleGroup(fontFamilyToggle);
+            sans_serif = new RadioMenuItem("sans_serif");
+            sans_serif.setToggleGroup(fontFamilyToggle);
+            sans_serif.setOnAction(e -> {
+                scene.getRoot().setStyle("-fx-font-family:sans_serif;");
+            });
+            fontfamily.getItems().addAll(arial, sans_serif);
+            backgroundColor = new MenuItem("backgraound color");
+            backgroundColor.setOnAction(eventhandler);
+            formatMenu.getItems().addAll(fontSize, new SeparatorMenuItem(), fontColor, new SeparatorMenuItem(), fontfamily, new SeparatorMenuItem(),
+                    backgroundColor);
+            helpMenu = new Menu("Help");
+            aboutApp = new MenuItem("about app");
+            aboutApp.setOnAction(e -> {
+                Dialog<String> di = new Dialog<>();
+                ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+                di.setHeaderText("About app");
+                di.getDialogPane().getButtonTypes().add(ok);
+                di.setContentText("this page is created in order to manage orders like add,search or edit orders");
+                di.show();
+            });
+            helpMenu.getItems().add(aboutApp);
+            allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
+            listOfClientLabel =new Label("clients :");
+            String role = "Client";
+            String sql = "select Name from users where Role='"+role+"'";
+            ResultSet rs = statement.executeQuery(sql);
+            ArrayList<String> client_list = new ArrayList<>();
+            while (rs.next()) {
+                users u = new users();
+                u.setName(rs.getString("Name"));
+                client_list.add(u.getName());
+            }
+            listClient = new ComboBox();
+            listClient.getItems().addAll(client_list);
+            listClient.setEditable(true);
+            HBox hb1 = new HBox(10,listOfClientLabel,listClient);
+            hb1.setAlignment(Pos.CENTER);
+            hb1.setPadding(new Insets(10));
+            listOfProductsLabel = new Label("Products:");
+            String sql2 = "select Name from products";
+            ResultSet rs2 = statement.executeQuery(sql2);
+            ArrayList<String> product_array = new ArrayList<>();
+            while(rs2.next()){
+                products p = new products();
+                p.setName(rs2.getString("Name"));
+                product_array.add(p.getName());
+            }
+            listProducts = new ComboBox<>();
+            listProducts.getItems().addAll(product_array);
+            listProducts.setEditable(true);
+            HBox hb2 = new HBox(10,listOfProductsLabel,listProducts);
+            hb2.setAlignment(Pos.CENTER);
+            hb2.setPadding(new Insets(10));
+            quantityLabel = new Label("quantity :");
+            quantityTextFeild = new TextField();
+            HBox hb3 = new HBox(10 , quantityLabel,quantityTextFeild);
+            hb3.setAlignment(Pos.CENTER);
+            hb3.setPadding(new Insets(10));
+            orderDateLabel = new Label("Order Date :");
+            orderDateTextField = new TextField();
+            HBox hb4 = new HBox(10,orderDateLabel,orderDateTextField);
+            hb4.setAlignment(Pos.CENTER);
+            hb4.setPadding(new Insets(10));
+            order_tableView =new TableView<>();
+            listOfClient_tableColumn = new TableColumn<>("Clients ");
+            listOfClient_tableColumn.setCellValueFactory(new PropertyValueFactory("user_id"));
+            listOfProducts_tableColumn = new TableColumn<>("Products ");
+            listOfProducts_tableColumn.setCellValueFactory(new PropertyValueFactory("Product_id"));
+            quantity_tableColumn = new TableColumn<>("Quantity ");
+            quantity_tableColumn.setCellValueFactory(new PropertyValueFactory("quantity"));
+            orderDate_tableColumn = new TableColumn<>("order Date ");
+            orderDate_tableColumn.setCellValueFactory(new PropertyValueFactory("date"));
+            order_tableView.getColumns().addAll(listOfClient_tableColumn,listOfProducts_tableColumn,quantity_tableColumn,orderDate_tableColumn);
+            addOrder = new Button("Add Order");
+            addOrder.setOnAction(eventhandler);
+            addOrder.setId("rich-blue");
+            reset = new Button("Reset");
+            reset.setOnAction(eventhandler);
+            reset.setId("rich-blue");
+            searchOrder = new Button("Search Order");
+            searchOrder.setOnAction(eventhandler);
+            searchOrder.setId("rich-blue");
+            viewOrder = new Button("View Order");
+            viewOrder.setOnAction(eventhandler);
+            viewOrder.setId("rich-blue");
+            back = new Button("Back");
+            back.setOnAction(eventhandler);
+            back.setId("rich-blue");
+            HBox hbButton = new HBox(10 , addOrder , viewOrder,searchOrder,reset,back);
+            hbButton.setAlignment(Pos.CENTER);
+            hbButton.setPadding(new Insets(10));
+            VBox vbAll = new VBox(10 , allMenues , hb1,hb2,hb3,hb4,order_tableView,hbButton);
+            vbAll.setAlignment(Pos.CENTER);
+            vbAll.setPadding(new Insets(10));
+            scene = new Scene(vbAll , 750,700);
+            setScene(scene);
+            scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
         } catch (SQLException ex) {
-            System.out.println(ex);
+            Logger.getLogger(AdminManageOrders.class.getName()).log(Level.SEVERE, null,ex);
         }
-        eventHandler eventhandler = new eventHandler();
-        allMenues = new MenuBar();
-        fileMenu = new Menu("File");
-        exit = new MenuItem("exit");
-        exit.setOnAction(e -> {
-            primaryStage.close();
-        });
-        fileMenu.getItems().add(exit);
-        formatMenu = new Menu("format");
-        fontSize = new Menu("font size");
-        fontSizeToggle = new ToggleGroup();
-        small = new RadioMenuItem("small");
-        small.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:small");
-        });
-        small.setToggleGroup(fontSizeToggle);
-        medium = new RadioMenuItem("medium");
-        medium.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:medium");
-        });
-        medium.setToggleGroup(fontSizeToggle);
-        large = new RadioMenuItem("large");
-        large.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:large");
-        });
-        large.setToggleGroup(fontSizeToggle);
-        fontSize.getItems().addAll(small, medium, large);
-        fontColor = new MenuItem("font color");
-        fontColor.setOnAction(eventhandler);
-
-        fontfamily = new Menu("font family");
-        fontFamilyToggle = new ToggleGroup();
-        arial = new RadioMenuItem("arial");
-
-        arial.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-family:arial;");
-        });
-        arial.setToggleGroup(fontFamilyToggle);
-
-        sans_serif = new RadioMenuItem("sans_serif");
-        sans_serif.setToggleGroup(fontFamilyToggle);
-        sans_serif.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-family:sans_serif;");
-        });
-        fontfamily.getItems().addAll(arial, sans_serif);
-        backgroundColor = new MenuItem("backgraound color");
-        backgroundColor.setOnAction(eventhandler);
-        formatMenu.getItems().addAll(fontSize, new SeparatorMenuItem(), fontColor, new SeparatorMenuItem(), fontfamily, new SeparatorMenuItem(),
-                 backgroundColor);
-        helpMenu = new Menu("Help");
-        aboutApp = new MenuItem("about app");
-        aboutApp.setOnAction(e -> {
-            Dialog<String> di = new Dialog<>();
-            ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-            di.setHeaderText("About app");
-            di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order to manage orders like add,search or edit orders");
-            di.show();
-        });
-        helpMenu.getItems().add(aboutApp);
-        allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
-        
-        listOfClientLabel =new Label("clients :");
-        String role = "Client";
-         String sql = "select Name from users where Role='"+role+"'";
-        ResultSet rs = statement.executeQuery(sql);
-        ArrayList<String> client_list = new ArrayList<>();
-        while (rs.next()) {
-            users u = new users();
-            u.setName(rs.getString("Name"));
-            client_list.add(u.getName());
-        }
-       
-        listClient = new ComboBox();
-        listClient.getItems().addAll(client_list);
-        listClient.setEditable(true);
-    
-    HBox hb1 = new HBox(10,listOfClientLabel,listClient);
-     hb1.setAlignment(Pos.CENTER);
-     hb1.setPadding(new Insets(10));
-     listOfProductsLabel = new Label("Products:");
-     String sql2 = "select Name from products";
-     ResultSet rs2 = statement.executeQuery(sql2);
-     ArrayList<String> product_array = new ArrayList<>();
-     while(rs2.next()){
-         products p = new products();
-         p.setName(rs2.getString("Name"));
-         product_array.add(p.getName());
-     }
-     listProducts = new ComboBox<>();
-     listProducts.getItems().addAll(product_array);
-     listProducts.setEditable(true);
-    HBox hb2 = new HBox(10,listOfProductsLabel,listProducts);
-     hb2.setAlignment(Pos.CENTER);
-     hb2.setPadding(new Insets(10));
-     quantityLabel = new Label("quantity :");
-     quantityTextFeild = new TextField();
-     HBox hb3 = new HBox(10 , quantityLabel,quantityTextFeild);
-      hb3.setAlignment(Pos.CENTER);
-     hb3.setPadding(new Insets(10));
-     
-     orderDateLabel = new Label("Order Date :");
-     orderDateTextField = new TextField();
-     HBox hb4 = new HBox(10,orderDateLabel,orderDateTextField);
-      hb4.setAlignment(Pos.CENTER);
-     hb4.setPadding(new Insets(10));
-     order_tableView =new TableView<>();
-     listOfClient_tableColumn = new TableColumn<>("Clients ");
-     listOfClient_tableColumn.setCellValueFactory(new PropertyValueFactory("user_id"));
-     
-     listOfProducts_tableColumn = new TableColumn<>("Products ");
-     listOfProducts_tableColumn.setCellValueFactory(new PropertyValueFactory("Product_id"));
-     
-     quantity_tableColumn = new TableColumn<>("Quantity ");
-     quantity_tableColumn.setCellValueFactory(new PropertyValueFactory("quantity"));
-     
-     orderDate_tableColumn = new TableColumn<>("order Date ");
-     orderDate_tableColumn.setCellValueFactory(new PropertyValueFactory("date"));
-     
-     order_tableView.getColumns().addAll(listOfClient_tableColumn,listOfProducts_tableColumn,quantity_tableColumn,orderDate_tableColumn);
-     
-     
-     
-     
-     
-     
-     
-     addOrder = new Button("Add Order");
-     addOrder.setOnAction(eventhandler);
-     addOrder.setId("rich-blue");
-     reset = new Button("Reset");
-     reset.setOnAction(eventhandler);
-     reset.setId("rich-blue");
-     searchOrder = new Button("Search Order");
-     searchOrder.setOnAction(eventhandler);
-     searchOrder.setId("rich-blue");
-     viewOrder = new Button("View Order");
-     viewOrder.setOnAction(eventhandler);
-     viewOrder.setId("rich-blue");
-     back = new Button("Back");
-     back.setOnAction(eventhandler);
-     back.setId("rich-blue");
-     HBox hbButton = new HBox(10 , addOrder , viewOrder,searchOrder,reset,back);
-      hbButton.setAlignment(Pos.CENTER);
-     hbButton.setPadding(new Insets(10));
-        VBox vbAll = new VBox(10 , allMenues , hb1,hb2,hb3,hb4,order_tableView,hbButton);
-        vbAll.setAlignment(Pos.CENTER);
-        vbAll.setPadding(new Insets(10));
-        
-     scene = new Scene(vbAll , 750,700);
-     primaryStage.setScene(scene);
-scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
-primaryStage.setTitle("manage Orders");
-primaryStage.show();
 
      
     }
@@ -341,7 +325,11 @@ primaryStage.show();
             }
             
             
-            
+            if(event.getSource()==back){
+                AdminDashborad ad = new AdminDashborad();
+                AdminManageOrders.this.close();
+                ad.show();
+            }
             
             
             
@@ -420,8 +408,5 @@ primaryStage.show();
         alert.showAndWait();
     }
         
-    public static void main(String[] args) {
-        launch(args);
-    }
-    
+  
 }

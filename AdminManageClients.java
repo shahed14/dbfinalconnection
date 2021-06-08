@@ -9,10 +9,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import static java.time.zone.ZoneRulesProvider.refresh;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,7 +37,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -45,7 +45,7 @@ import javafx.stage.Stage;
  *
  * @author HP
  */
-public class AdminManageClients extends Application {
+public class AdminManageClients extends Stage {
      MenuBar allMenues;
     Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
     MenuItem exit, fontColor, backgroundColor, aboutApp;
@@ -59,127 +59,129 @@ public class AdminManageClients extends Application {
     TextField idText , nameText;
     Connection connection ;
     Statement statement;
-    Scene scene;
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        try {
-            connection = DBconnection.get_connection();
-            statement = connection.createStatement();
-        } catch (SQLException ex) {
-            System.out.println(ex);
-        }
-         eventHandler eventhandler = new eventHandler();
-        allMenues = new MenuBar();
-        fileMenu = new Menu("File");
-        exit = new MenuItem("exit");
-        exit.setOnAction(e -> {
-            primaryStage.close();
-        });
-        fileMenu.getItems().add(exit);
-        formatMenu = new Menu("format");
-        fontSize = new Menu("font size");
-        fontSizeToggle = new ToggleGroup();
-        small = new RadioMenuItem("small");
-        small.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:small");
-        });
-        small.setToggleGroup(fontSizeToggle);
-        medium = new RadioMenuItem("medium");
-        medium.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:medium");
-        });
-        medium.setToggleGroup(fontSizeToggle);
-        large = new RadioMenuItem("large");
-        large.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-size:large");
-        });
-        large.setToggleGroup(fontSizeToggle);
-        fontSize.getItems().addAll(small, medium, large);
-        fontColor = new MenuItem("font color");
-        fontColor.setOnAction(eventhandler);
-
-        fontfamily = new Menu("font family");
-        fontFamilyToggle = new ToggleGroup();
-        arial = new RadioMenuItem("arial");
-
-        arial.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-family:arial;");
-        });
-        arial.setToggleGroup(fontFamilyToggle);
-
-        sans_serif = new RadioMenuItem("sans_serif");
-        sans_serif.setToggleGroup(fontFamilyToggle);
-        sans_serif.setOnAction(e -> {
-            scene.getRoot().setStyle("-fx-font-family:sans_serif;");
-        });
-        fontfamily.getItems().addAll(arial, sans_serif);
-        backgroundColor = new MenuItem("backgraound color");
-        backgroundColor.setOnAction(eventhandler);
-        formatMenu.getItems().addAll(fontSize, new SeparatorMenuItem(), fontColor, new SeparatorMenuItem(), fontfamily, new SeparatorMenuItem(),
-                 backgroundColor);
-        helpMenu = new Menu("Help");
-        aboutApp = new MenuItem("about app");
-        aboutApp.setOnAction(e -> {
-            Dialog<String> di = new Dialog<>();
-            ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-            di.setHeaderText("About app");
-            di.getDialogPane().getButtonTypes().add(ok);
-            di.setContentText("this page is created in order manage clients like add,edit,search or delete clients from datebase");
-            di.show();
-        });
-        helpMenu.getItems().add(aboutApp);
-        allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
-        idLabel = new Label("id for delete :");
-        idText = new TextField();
-        HBox hb1 = new HBox(10,idLabel,idText);
-        hb1.setAlignment(Pos.CENTER);
-        hb1.setPadding(new Insets(10));
-         nameLabel = new Label("name for search :");
-        nameText = new TextField();
-        HBox hb12 = new HBox(10,nameLabel,nameText);
-        hb12.setAlignment(Pos.CENTER);
-        hb12.setPadding(new Insets(10));
-        client_tableView = new TableView<>();
-        id_tableColumn = new TableColumn<>("Id");
-        id_tableColumn.setCellValueFactory(new PropertyValueFactory("id"));
-        name_tableColumn = new TableColumn<>("Name");
-        name_tableColumn.setCellValueFactory(new PropertyValueFactory("name"));
-         email_tableColumn = new TableColumn<>("Email");
-        email_tableColumn.setCellValueFactory(new PropertyValueFactory("email"));
-         Mobile_tableColumn = new TableColumn<>("Mobile");
-        Mobile_tableColumn.setCellValueFactory(new PropertyValueFactory("mobile"));
-        Password_tableColumn = new TableColumn<>("Password");
-        Password_tableColumn.setCellValueFactory(new PropertyValueFactory("password")); 
-        role_tableColumn = new TableColumn<>("Role");
-        role_tableColumn.setCellValueFactory(new PropertyValueFactory("role"));
-        client_tableView.getColumns().addAll(id_tableColumn,name_tableColumn
-         ,email_tableColumn,Mobile_tableColumn,Password_tableColumn,role_tableColumn);
-       view = new Button("View Clients");
-       view.setId("rich-blue");
-       view.setOnAction(eventhandler);
-       deleteById = new Button("Delete");
-       deleteById.setId("rich-blue");
-       deleteById.setOnAction(eventhandler);
-       searchByName = new Button("Search");
-       searchByName.setId("rich-blue");
-       searchByName.setOnAction(eventhandler);
-       refresh = new Button("Refresh");
-       refresh.setId("rich-blue");
-       refresh.setOnAction(eventhandler);
-       back = new Button("Back");
-       back.setOnAction(eventhandler);
-       back.setId("rich-blue");
-        HBox hbButtons = new HBox(20 , view,deleteById,searchByName,refresh,back);
-        hbButtons.setAlignment(Pos.CENTER);
-        hbButtons.setPadding(new Insets(20));
-        VBox vb = new VBox(20,allMenues,hb1,hb12,client_tableView,hbButtons);
-        scene = new Scene(vb);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("manage Orders");
-        scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
-           
-        primaryStage.show();
-    }
+   public Scene scene;
+   
+        public AdminManageClients(){
+         try {
+             connection = DBconnection.get_connection();
+             statement = connection.createStatement();
+             
+             eventHandler eventhandler = new eventHandler();
+             allMenues = new MenuBar();
+             fileMenu = new Menu("File");
+             exit = new MenuItem("exit");
+             exit.setOnAction(e -> {
+              AdminManageClients.this.close();
+             });
+             fileMenu.getItems().add(exit);
+             formatMenu = new Menu("format");
+             fontSize = new Menu("font size");
+             fontSizeToggle = new ToggleGroup();
+             small = new RadioMenuItem("small");
+             small.setOnAction(e -> {
+                 scene.getRoot().setStyle("-fx-font-size:small");
+             });
+             small.setToggleGroup(fontSizeToggle);
+             medium = new RadioMenuItem("medium");
+             medium.setOnAction(e -> {
+                 scene.getRoot().setStyle("-fx-font-size:medium");
+             });
+             medium.setToggleGroup(fontSizeToggle);
+             large = new RadioMenuItem("large");
+             large.setOnAction(e -> {
+                 scene.getRoot().setStyle("-fx-font-size:large");
+             });
+             large.setToggleGroup(fontSizeToggle);
+             fontSize.getItems().addAll(small, medium, large);
+             fontColor = new MenuItem("font color");
+             fontColor.setOnAction(eventhandler);
+             
+             fontfamily = new Menu("font family");
+             fontFamilyToggle = new ToggleGroup();
+             arial = new RadioMenuItem("arial");
+             
+             arial.setOnAction(e -> {
+                 scene.getRoot().setStyle("-fx-font-family:arial;");
+             });
+             arial.setToggleGroup(fontFamilyToggle);
+             
+             sans_serif = new RadioMenuItem("sans_serif");
+             sans_serif.setToggleGroup(fontFamilyToggle);
+             sans_serif.setOnAction(e -> {
+                 scene.getRoot().setStyle("-fx-font-family:sans_serif;");
+             });
+             fontfamily.getItems().addAll(arial, sans_serif);
+             backgroundColor = new MenuItem("backgraound color");
+             backgroundColor.setOnAction(eventhandler);
+             formatMenu.getItems().addAll(fontSize, new SeparatorMenuItem(), fontColor, new SeparatorMenuItem(), fontfamily, new SeparatorMenuItem(),
+                     backgroundColor);
+             helpMenu = new Menu("Help");
+             aboutApp = new MenuItem("about app");
+             aboutApp.setOnAction(e -> {
+                 Dialog<String> di = new Dialog<>();
+                 ButtonType ok = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+                 di.setHeaderText("About app");
+                 di.getDialogPane().getButtonTypes().add(ok);
+                 di.setContentText("this page is created in order manage clients like add,edit,search or delete clients from datebase");
+                 di.show();
+             });
+             helpMenu.getItems().add(aboutApp);
+             allMenues.getMenus().addAll(fileMenu, formatMenu, helpMenu);
+             idLabel = new Label("id for delete :");
+             idText = new TextField();
+             HBox hb1 = new HBox(10,idLabel,idText);
+             hb1.setAlignment(Pos.CENTER);
+             hb1.setPadding(new Insets(10));
+             nameLabel = new Label("name for search :");
+             nameText = new TextField();
+             HBox hb12 = new HBox(10,nameLabel,nameText);
+             hb12.setAlignment(Pos.CENTER);
+             hb12.setPadding(new Insets(10));
+             client_tableView = new TableView<>();
+             id_tableColumn = new TableColumn<>("Id");
+             id_tableColumn.setCellValueFactory(new PropertyValueFactory("id"));
+             name_tableColumn = new TableColumn<>("Name");
+             name_tableColumn.setCellValueFactory(new PropertyValueFactory("name"));
+             email_tableColumn = new TableColumn<>("Email");
+             email_tableColumn.setCellValueFactory(new PropertyValueFactory("email"));
+             Mobile_tableColumn = new TableColumn<>("Mobile");
+             Mobile_tableColumn.setCellValueFactory(new PropertyValueFactory("mobile"));
+             Password_tableColumn = new TableColumn<>("Password");
+             Password_tableColumn.setCellValueFactory(new PropertyValueFactory("password"));
+             role_tableColumn = new TableColumn<>("Role");
+             role_tableColumn.setCellValueFactory(new PropertyValueFactory("role"));
+             client_tableView.getColumns().addAll(id_tableColumn,name_tableColumn
+                     ,email_tableColumn,Mobile_tableColumn,Password_tableColumn,role_tableColumn);
+             view = new Button("View Clients");
+             view.setId("rich-blue");
+             view.setOnAction(eventhandler);
+             deleteById = new Button("Delete");
+             deleteById.setId("rich-blue");
+             deleteById.setOnAction(eventhandler);
+             searchByName = new Button("Search");
+             searchByName.setId("rich-blue");
+             searchByName.setOnAction(eventhandler);
+             refresh = new Button("Refresh");
+             refresh.setId("rich-blue");
+             refresh.setOnAction(eventhandler);
+             back = new Button("Back");
+             back.setOnAction(eventhandler);
+             back.setId("rich-blue");
+            // AdminDashborad ad = new AdminDashborad();
+            
+             HBox hbButtons = new HBox(20 , view,deleteById,searchByName,refresh,back);
+             hbButtons.setAlignment(Pos.CENTER);
+             hbButtons.setPadding(new Insets(20));
+             VBox vb = new VBox(20,allMenues,hb1,hb12,client_tableView,hbButtons);
+             scene = new Scene(vb);
+             setScene(scene);
+             scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
+         } catch (Exception ex) {
+             System.out.println(ex);
+         }
+         }
+ 
+    
 
                 public class eventHandler implements EventHandler<ActionEvent> {
 
@@ -277,6 +279,9 @@ public class AdminManageClients extends Application {
             }
             
             if(event.getSource()==back){
+                AdminDashborad ad =new AdminDashborad();
+                AdminManageClients.this.close();
+                ad.show();
                 
             }
               if(event.getSource()==fontColor){
@@ -351,10 +356,8 @@ public class AdminManageClients extends Application {
         alert.showAndWait();
     }
 
-                    
+               
                 
-    public static void main(String[] args) {
-        launch(args);
-    }
+   
     
 }

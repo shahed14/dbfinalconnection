@@ -50,7 +50,7 @@ import javafx.stage.Window;
  *
  * @author HP
  */
-public class AdminManageProducts extends Application {
+public class AdminManageProducts extends Stage {
     MenuBar allMenues;
     Menu fileMenu, formatMenu, helpMenu, fontSize, fontfamily;
     MenuItem exit, fontColor, backgroundColor, aboutApp;
@@ -70,13 +70,13 @@ public class AdminManageProducts extends Application {
     
     
     
-    
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+   public AdminManageProducts(){
         try {
             connection = DBconnection.get_connection();
             statement = connection.createStatement();
         } catch (SQLException ex) {
+            System.out.println(ex);
+        } catch (Exception ex) {
             System.out.println(ex);
         }
         eventHandler eventhandler = new eventHandler();
@@ -84,7 +84,7 @@ public class AdminManageProducts extends Application {
         fileMenu = new Menu("File");
         exit = new MenuItem("exit");
         exit.setOnAction(e -> {
-            primaryStage.close();
+       AdminManageProducts.this.close();
         });
         fileMenu.getItems().add(exit);
         formatMenu = new Menu("format");
@@ -214,11 +214,9 @@ backTODashboard.setOnAction(eventhandler);
          vbAll.setPadding(new Insets(10));
          
          scene = new Scene(vbAll ,700,600);
-         primaryStage.setScene(scene );
+         setScene(scene );
                scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
 
-         primaryStage.setTitle("manage products");
-         primaryStage.show();
          
          
          
@@ -370,10 +368,9 @@ backTODashboard.setOnAction(eventhandler);
          
      }
            if(event.getSource()==backTODashboard){
-               ClientChangePassword cp = new ClientChangePassword();
-           //    scene = new Scene(dbfinal.ClientChangePassword);
-            //   Stage stage = new Stage();
-            //   stage.setScene(dbfinal.ClientChangePassword.launch(args));
+            AdminDashborad ad = new AdminDashborad();
+            AdminManageProducts.this.close();
+            ad.show();
                
                
            }
@@ -458,8 +455,6 @@ backTODashboard.setOnAction(eventhandler);
         
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+   
     
 }

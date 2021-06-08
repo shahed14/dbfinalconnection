@@ -44,7 +44,7 @@ import javafx.stage.Window;
  *
  * @author HP
  */
-public class Register extends Application {
+public class Register extends Stage {
     Label nameLabel , emailLabel , mobileLabel , passwordLabel;
     TextField nameText , emailText , mobileText , passwordText;
     Button register , reset;
@@ -56,16 +56,23 @@ public class Register extends Application {
     Connection connection;
     Statement statement;
     Scene scene;
-    @Override
-    public void start(Stage primaryStage) throws IOException, Exception {
-      connection = DBconnection.get_connection();
-      statement = connection.createStatement();
+    public Register(){
+        try {
+            connection = DBconnection.get_connection();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
       eventHandler eventhandler = new eventHandler();
       allMenues = new MenuBar();
         fileMenu = new Menu("File");
         exit = new MenuItem("exit");
         exit.setOnAction(e -> {
-            primaryStage.close();
+         Register.this.close();
         });
         fileMenu.getItems().add(exit);
         formatMenu = new Menu("format");
@@ -154,10 +161,9 @@ public class Register extends Application {
         vb.setAlignment(Pos.CENTER);
         vb.setPadding(new Insets(10));
         scene = new Scene(vb ,600,400 );
-        primaryStage.setScene(scene);
+       setScene(scene);
         scene.getStylesheets().add("file:src//dbfinal//clientProfile.css");
-        primaryStage.setTitle("Registration screen");
-        primaryStage.show();
+      setTitle("Registration screen");
     }
 
    
@@ -309,8 +315,6 @@ public class Register extends Application {
         alert.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+  
 
 }
